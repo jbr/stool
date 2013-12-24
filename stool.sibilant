@@ -1,0 +1,13 @@
+(include "stool/include/stool")
+
+(command package-json "rebuilds the npm package json"
+  (exec "sibilant package.sibilant > package.json" next))
+
+(command clean "uses git to revert to a clean product"
+  (exec "git checkout package.json" next))
+
+(command all "clean package-json test"
+  (cascade
+    clean
+    package-json
+    next))
