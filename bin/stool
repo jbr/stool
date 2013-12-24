@@ -1,0 +1,4 @@
+#!/usr/bin/env node
+
+console.log("Sibilant build TOOL: Build or get off the chair")
+console.log("...coming soon...")
