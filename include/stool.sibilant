@@ -1,5 +1,3 @@
-(var STOOLVERSION 10)
-
 (var commands {}
      help {}
      args (process.argv.slice 2)
