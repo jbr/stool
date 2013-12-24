@@ -1,0 +1,45 @@
+(var STOOLVERSION 10)
+
+(var commands {}
+     help {}
+     args (process.argv.slice 2)
+     child-process (require "child_process"))
+
+(def exec (cmd callback)
+  (child-process.exec cmd, { encoding 'binary }
+                      (#(err stdout stderr)
+                        (when stdout (console.log stdout))
+                        (when stderr (console.log stderr))
+                        (console.log (if err 'failure 'success))
+                        (when callback (callback err)))))
+
+(def register (name command-help command)
+  (set help name command-help)
+  (set commands name (#(next)
+                       (console.log (+ "\nExecuting "name":"))
+                       (command next))))
+
+(macro command (name help &rest body)
+  (macros.var name (macros.call 'register (macros.quote name)
+                                help
+                                (apply macros.lambda (cons ['next] body)))))
+
+(def perform (commands-to-perform)
+  (unless (empty? commands-to-perform)
+    ((get commands (first commands-to-perform))
+      (#> (perform (rest commands-to-perform))))))
+
+(when (empty? args) (assign args ['default-command]))
+
+(process.next-tick (#> (perform args)))
+
+(command list "this list"
+  (console.log (+ "Sibilant version " (meta (macros.quote (sibilant.version)))))
+  (console.log "\nAvailable commands:")
+  (each-key command commands
+            (unless (= 'default-command command)
+                    (console.log (+ "\t" command "\t\t"
+                                    (or (get help command) "")))))
+  (next))
+
+(command default-command 'list (commands.list next))
