@@ -1,6 +1,6 @@
 {
   "name": "stool",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "keywords": [ "sibilant", "buildtool" ],
   "description": "stool: build or get off the chair",
   "contributors": [ "Jacob Rothstein <hi@jbr.me> (http://jbr.me)" ],
@@ -13,6 +13,6 @@
     "url": "http://github.com/jbr/stool/issues"
   },
   "bin": { "stool": "./bin/stool" },
-  "devDependencies": { "sibilant": "~0.1.x" }
+  "devDependencies": { "sibilant": "~0.3.x" }
 }
 
