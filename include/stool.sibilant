@@ -4,41 +4,40 @@
      child-process (require "child_process"))
 
 (def exec (cmd callback)
-  (child-process.exec cmd, { encoding 'binary }
-                      (#(err stdout stderr)
-                        (when stdout (console.log stdout))
-                        (when stderr (console.log stderr))
-                        (console.log (if err 'failure 'success))
-                        (when callback (callback err)))))
+     (child-process.exec cmd, { encoding 'binary }
+                         (#(err stdout stderr)
+                           (when stdout (console.log stdout))
+                           (when stderr (console.log stderr))
+                           (console.log (if err 'failure 'success))
+                           (when callback (callback err)))))
 
 (def register (name command-help command)
-  (set help name command-help)
-  (set commands name (#(next)
-                       (console.log (+ "\nExecuting "name":"))
-                       (command next))))
+     (set help name command-help)
+     (set commands name (#(next)
+                          (console.log (+ "\nExecuting "name":"))
+                          (command next))))
 
 (macro command (name help ...body)
-  (^var name (^call 'register ("\"" (transpile name) "\"")
-                                help
-                                (^lambda { name name args ['next] } ...body))))
-(macroexpand command)
+       (^var name (^call 'register ("\"" (output-formatter (transpile name)) "\"")
+                         help
+                         (^lambda { name name args ['next] body body }))))
 
 (def perform (commands-to-perform)
-  (unless (empty? commands-to-perform)
-    ((get commands (first commands-to-perform))
-      (#> (perform (rest commands-to-perform))))))
+     (unless (empty? commands-to-perform)
+             ((get commands (first commands-to-perform))
+              (#> (perform (rest commands-to-perform))))))
 
 (when (empty? args) (assign args ['default-command]))
 
 (process.next-tick (#> (perform args)))
 
 (command list "this list"
-  (console.log ("Sibilant version " (meta ("\"" (sibilant.version) "\""))))
-  (console.log "\nAvailable commands:")
-  (each-key command commands
-            (unless (= 'default-command command)
-                    (console.log (+ "\t" command "\t\t"
-                                    (or (get help command) "")))))
-  (next))
+         (console.log ("Sibilant version " (meta ("\"" (sibilant.version) "\""))))
+         (console.log "\nAvailable commands:")
+         (each-key command commands
+                   (unless (= 'default-command command)
+                           (console.log (+ "\t" command "\t\t"
+                                           (or (get help command) "")))))
+         (next))
 
 (command default-command 'list (commands.list next))

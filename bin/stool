@@ -1,1 +1,2 @@
-sibilant -x stool.sibilant -- $@
+#!/usr/bin/env bash
+sibilant stool.sibilant -x -- $@
