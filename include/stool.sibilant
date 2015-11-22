@@ -18,9 +18,9 @@
                           (command next))))
 
 (macro command (name help ...body)
-       (^var name (^call 'register ("\"" (output-formatter (transpile name)) "\"")
-                         help
-                         (^lambda { name name args ['next] body body }))))
+       `(var @name (register @["\"" (output-formatter (transpile name)) "\""]
+                             @help
+                             (lambda @{ name name args ['next] body body }))))
 
 (def perform (commands-to-perform)
      (unless (empty? commands-to-perform)
