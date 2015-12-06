@@ -1,11 +1,11 @@
 { name             'stool
-  version          "0.0.6"
-  keywords         ['sibilant 'buildtool]
+  version          "0.0.7"
+  keywords         `[sibilant buildtool]
   description      "stool: build or get off the chair"
   contributors     [ "Jacob Rothstein <hi@jbr.me> (http://jbr.me)" ]
   repository       { type 'git
                      url  "http://github.com/jbr/stool.git" }
   bugs             { url "http://github.com/jbr/stool/issues" }
   bin              { stool "./bin/stool" }
-  dev-dependencies { sibilant ">=0.3.3" }}
+  dev-dependencies { sibilant ">=0.3.5" }}
 
