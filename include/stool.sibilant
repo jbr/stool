@@ -2,6 +2,7 @@
      help {}
      args (process.argv.slice 2)
      child-process (require "child_process"))
+(namespace stool)
 
 (def exec (cmd callback)
      (child-process.exec cmd, { encoding 'binary }
@@ -24,8 +25,12 @@
 
 (def perform (commands-to-perform)
      (unless (empty? commands-to-perform)
-             ((get commands (first commands-to-perform))
-              (#> (perform (rest commands-to-perform))))))
+           (var command-name (first commands-to-perform)
+                command-fn (get commands command-name))
+           (if (function? command-fn)
+               (command-fn (#> (perform (rest commands-to-perform))))
+               (console.error ("no command " command-name)))))
+
 
 (when (empty? args) (assign args ['default-command]))
 
@@ -39,5 +44,20 @@
                            (console.log (+ "\t" command "\t\t"
                                            (or (get help command) "")))))
          (next))
+
+(macro sequence (sequence-name description sequence-array)
+       (when (undefined? sequence-array)
+             (assign sequence-array description
+                     description undefined)) 
+
+       (var quoted `(quote @sequence-array)
+            arr (pipe quoted
+                      (transpile)
+                      (output-formatter)
+                      (eval)))
+       
+       (default description ("\"" (arr.join " ") "\""))
+       `(command @sequence-name @description (perform @quoted))) 
+
 
 (command default-command 'list (commands.list next))
